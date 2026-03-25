@@ -4,8 +4,13 @@ import re
 import requests
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from pathlib import Path
 from dotenv import load_dotenv
 from unicodedata import normalize
+
+# Load .env from /config/.env
+ENV_PATH = Path(__file__).parent.parent / "config" / ".env"
+load_dotenv(ENV_PATH)
 
 load_dotenv()
 
