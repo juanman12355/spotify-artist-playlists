@@ -22,10 +22,6 @@ TOKEN_FILE = Path(__file__).parent.parent / "config" / ".token_cache.json"
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 
-# print("DEBUG ENV_PATH:", ENV_PATH)
-# print("DEBUG CLIENT_ID:", repr(CLIENT_ID))
-# print("DEBUG CLIENT_SECRET:", repr(CLIENT_SECRET))
-
 def guardar_token(token_data:dict):
     token_data["expires_at"] = time.time() + token_data["expires_in"]
     with open(TOKEN_FILE, "w") as f:
@@ -62,11 +58,14 @@ def flujo_autorizacion() -> dict:
         "redirect_uri": REDIRECT_URI,
         "scope": SCOPES,
         "state": state
-    }
+    }  
     url = f"{AUTH_URL}?{urlencode(params)}"
     print("\n Abriendo el navegador para autorizar la app.")
     print (f"Si no se abre, ve manualmente a:\n {url}\n")
-    webbrowser.open(url)
+
+    print(f"\n🔐 Abre esta URL en una ventana de incógnito:\n\n   {url}\n")
+
+    # webbrowser.open(url)
 
     url_respuesta = input("Pega aqui la URL completa a la que fuiste redirigido: \n>").strip()
     parsed = urlparse(url_respuesta)
@@ -89,7 +88,7 @@ def flujo_autorizacion() -> dict:
     token_data = respuesta.json()
     guardar_token(token_data)
     print("Autorizacion exitosa.\n")
-    return token_data["access_token"]
+    return token_data
 
 def obtener_token() -> str:
     token_data = cargar_token()

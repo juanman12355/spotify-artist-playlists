@@ -3,13 +3,34 @@ import requests
 BASE_URL = "https://api.spotify.com/v1"
 
 # Crea una playlist privada y devuelve su info.
+# def crear_playlist(token: str, user_id: str, nombre: str, descripcion: str = "") -> dict:
+#     respuesta = requests.post(f"{BASE_URL}/users/{user_id}/playlists",
+#         headers={"Authorization": f"Bearer {token}",
+#                  "Content-Type": "application/json"},
+#         json={"name": nombre, "public": False,
+#               "description": descripcion}
+#     )
+#     respuesta.raise_for_status()
+#     return respuesta.json()
+
 def crear_playlist(token: str, user_id: str, nombre: str, descripcion: str = "") -> dict:
-    respuesta = requests.post(f"{BASE_URL}/users/{user_id}/playlists",
-        headers={"Authorization": f"Bearer {token}",
-                 "Content-Type": "application/json"},
-        json={"name": nombre, "public": False,
-              "description": descripcion}
+    # Usar /me/playlists en lugar de /users/{id}/playlists
+    respuesta = requests.post(
+        f"{BASE_URL}/me/playlists",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "name": nombre,
+            "public": False,
+            "description": descripcion
+        }
     )
+
+    if not respuesta.ok:
+        print("DEBUG crear_playlist error:", respuesta.status_code, respuesta.json())
+
     respuesta.raise_for_status()
     return respuesta.json()
 

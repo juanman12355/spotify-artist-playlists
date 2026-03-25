@@ -13,7 +13,7 @@ KEYWORDS_REMASTERED = [
 ]
 
 def normalizar(texto: str) -> str:
-    texto = texto.lower().strip
+    texto = texto.lower().strip()
     texto = unorm("NFD", texto).encode("ascii", "ignore").decode("utf-8")
     texto = re.sub(r"[^a-z0-9\s]", "", texto)
     return re.sub(r"\s+", " ", texto).strip()
