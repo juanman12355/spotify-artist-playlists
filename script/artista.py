@@ -3,7 +3,7 @@ from utils import es_en_vivo, es_remastered, nombre_base_album
 
 BASE_URL = "https://api.spotify.com/v1"
 
-def busca_artista(token: str, nombre:str) -> dict:
+def buscar_artista(token: str, nombre:str) -> dict:
     respuesta = requests.get(f"{BASE_URL}/search", headers={
         "Authorization": f"Bearer {token}"
     }, params={"q": f"artist:{nombre}", "type": "artist", "limit": 1})
