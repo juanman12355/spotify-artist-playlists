@@ -62,10 +62,7 @@ def flujo_autorizacion() -> dict:
     url = f"{AUTH_URL}?{urlencode(params)}"
     print("\n Abriendo el navegador para autorizar la app.")
     print (f"Si no se abre, ve manualmente a:\n {url}\n")
-
-    print(f"\n🔐 Abre esta URL en una ventana de incógnito:\n\n   {url}\n")
-
-    # webbrowser.open(url)
+    webbrowser.open(url)
 
     url_respuesta = input("Pega aqui la URL completa a la que fuiste redirigido: \n>").strip()
     parsed = urlparse(url_respuesta)
