@@ -14,13 +14,17 @@ ENV_PATH = Path(__file__).parent.parent / "config" / ".env"
 load_dotenv(ENV_PATH)
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
-CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET=")
+CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8888/callback")
 SCOPES = "playlist-modify-private playlist-modify-public"
 TOKEN_FILE = Path(__file__).parent.parent / "config" / ".token_cache.json"
 
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
+
+# print("DEBUG ENV_PATH:", ENV_PATH)
+# print("DEBUG CLIENT_ID:", repr(CLIENT_ID))
+# print("DEBUG CLIENT_SECRET:", repr(CLIENT_SECRET))
 
 def guardar_token(token_data:dict):
     token_data["expires_at"] = time.time() + token_data["expires_in"]
@@ -71,19 +75,21 @@ def flujo_autorizacion() -> dict:
         raise ValueError("No se encontró el código de autorizacion en la URL.")
     
     credenciales = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
+    
     respuesta = requests.post(TOKEN_URL, headers={
-        "Authorization": f"Basic{credenciales}",
-        "Content_Type": "application/x-www-form-urlencoded"
+        "Authorization": f"Basic {credenciales}",
+        "Content-Type": "application/x-www-form-urlencoded"
     }, data={
         "grant_type": "authorization_code",
         "code": code,
         "redirect_uri": REDIRECT_URI
     })
+
     respuesta.raise_for_status()
     token_data = respuesta.json()
     guardar_token(token_data)
     print("Autorizacion exitosa.\n")
-    return token_data
+    return token_data["access_token"]
 
 def obtener_token() -> str:
     token_data = cargar_token()
@@ -98,7 +104,7 @@ def obtener_token() -> str:
     
     # No token saved - complete execution
     token_data = flujo_autorizacion()
-    return token_data("access_token")
+    return token_data["access_token"]
 
 def headers(token:str) -> dict:
     return{"Authorization": f"Bearer {token}"}
