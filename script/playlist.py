@@ -39,11 +39,15 @@ def agregar_tracks(token: str, playlist_id: str, uris: list):
     for i in range(0, len(uris), 100):
         lote = uris[i:i + 100]
         respuesta = requests.post(
-            f"{BASE_URL}/playlists/{playlist_id}/tracks",
-            headers={"Authorization": f"Bearer {token}",
-                     "Content-Type": "application/json"},
+            f"{BASE_URL}/playlists/{playlist_id}/items",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"
+            },
             json={"uris": lote}
         )
+        if not respuesta.ok:
+            print("DEBUG error:", respuesta.json())
         respuesta.raise_for_status()
         print(f"Lote {i // 100 + 1}: {len(lote)} canciones agregadas")
 

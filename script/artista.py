@@ -1,7 +1,24 @@
 import requests
+import time
 from utils import es_en_vivo, es_remastered, nombre_base_album
 
 BASE_URL = "https://api.spotify.com/v1"
+
+# Hace GET con manejo automático de rate limiting (429).
+def get_con_reintento(url: str, headers: dict, params: dict, max_reintentos: int = 5) -> dict:
+    for intento in range(max_reintentos):
+        respuesta = requests.get(url, headers=headers, params=params)
+        
+        if respuesta.status_code == 429:
+            espera = int(respuesta.headers.get("Retry-After", 5)) + 1
+            print(f"Rate limit alcanzado, esperando {espera} segundos.")
+            time.sleep(espera)
+            continue
+        
+        respuesta.raise_for_status()
+        return respuesta.json()
+    
+    raise Exception("Se superó el número máximo de reintentos por rate limiting.")
 
 def buscar_artista(token: str, nombre:str) -> dict:
     respuesta = requests.get(f"{BASE_URL}/search", headers={
@@ -17,14 +34,12 @@ def obtener_albumes_paginados(token: str, artist_id: str, tipo: str) -> list:
     albumes = []
     offset = 0
     while True:
-        respuesta = requests.get(
+        data = get_con_reintento(
             f"{BASE_URL}/artists/{artist_id}/albums",
             headers={"Authorization":f"Bearer {token}"},
             params={"include_groups": tipo, "limit": 10,
                     "offset": offset, "market": "CO"}
         )
-        respuesta.raise_for_status()
-        data = respuesta.json()
         items = data.get("items", [])
         if not items:
             break
@@ -34,6 +49,7 @@ def obtener_albumes_paginados(token: str, artist_id: str, tipo: str) -> list:
         offset += len(items)
         if not data.get("next"):
             break
+        time.sleep(0.5)
     return albumes
 
 def obtener_todos_los_albumes(token: str, artist_id: str) -> list:

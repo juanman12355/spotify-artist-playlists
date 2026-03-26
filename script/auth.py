@@ -16,7 +16,7 @@ load_dotenv(ENV_PATH)
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8888/callback")
-SCOPES = "playlist-modify-private playlist-modify-public"
+SCOPES = "playlist-modify-private playlist-modify-public ugc-image-upload"
 TOKEN_FILE = Path(__file__).parent.parent / "config" / ".token_cache.json"
 
 AUTH_URL = "https://accounts.spotify.com/authorize"

@@ -1,4 +1,5 @@
 import requests
+import time
 from utils import normalizar, es_remastered
 
 BASE_URL = "https://api.spotify.com/v1"
@@ -28,6 +29,7 @@ def recopilar_tracks(token: str, albumes: list) -> list:
         print(f"[{i}/{len(albumes)}] {album['name']}")
         tracks = obtener_track_de_album(token, album["id"])
         todas.extend(tracks)
+        time.sleep(0.3)
     return todas
 
 def deduplicar(tracks: list) -> list:

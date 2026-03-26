@@ -2,9 +2,10 @@ import re
 from unicodedata import normalize as unorm
 
 KEYWORDS_EN_VIVO = [
-    "live", "en vivo", "en directo", "concert", "concierto",
+    "live in", "en vivo", "en directo", "concert", "concierto",
     "unplugged", "mtv", "tour", "at the", "wembley", "glastonbury",
-    "recorded at", "acoustic live"
+    "recorded at", "acoustic live", "hollywood", "san diego", "radio",
+    "ventura", "london", "pomona", "live"
 ]
 
 KEYWORDS_REMASTERED = [
